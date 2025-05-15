@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RouteCraft - Fuel Cost Estimator</title>
+    
+    <!-- Mapbox GL JS and Geocoder -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css" />
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        form {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .geocoder-input {
+            width: 100%;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            background: #e7f3fe;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>RouteCraft Fuel Cost Estimator</h1>
+    
+    <form method="POST" id="route-form">
+        <div id="start-input" class="geocoder-input"></div>
+        <input type="hidden" name="start_address" id="start" required>
+        
+        <div id="end-input" class="geocoder-input"></div>
+        <input type="hidden" name="end_address" id="end" required>
+        
+        <button type="submit">Calculate Fuel Cost</button>
+    </form>
+
+    {% if error %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if result %}
+    <div class="result">
+        <h2>Route Details</h2>
+        <p><strong>From:</strong> {{ result.start_address }}</p>
+        <p><strong>To:</strong> {{ result.end_address }}</p>
+        <p><strong>Distance:</strong> {{ result.distance }} miles</p>
+        <p><strong>Estimated Fuel Cost:</strong> ${{ result.cost }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Mapbox Libraries -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+
+    <script>
+        // Set Mapbox access token
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYXNpYW50b3duMjAwOCIsImEiOiJjbWFvcndqODAwYTZyMmtvcnk4bTkzZjZuIn0.fbK2UdrY3SlLAVZA86W7FQ';
+
+        // Create Geocoders for start and end inputs
+        const startGeocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            types: 'address',
+            placeholder: 'Enter starting address',
+            countries: 'us'
+        });
+
+        const endGeocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            types: 'address',
+            placeholder: 'Enter destination address',
+            countries: 'us'
+        });
+
+        // Add Geocoders to their respective containers
+        document.getElementById('start-input').appendChild(startGeocoder.onAdd());
+        document.getElementById('end-input').appendChild(endGeocoder.onAdd());
+
+        // Event listeners to update hidden inputs when an address is selected
+        startGeocoder.on('result', function(e) {
+            document.getElementById('start').value = e.result.place_name;
+        });
+
+        endGeocoder.on('result', function(e) {
+            document.getElementById('end').value = e.result.place_name;
+        });
+    </script>
+</body>
+</html>
