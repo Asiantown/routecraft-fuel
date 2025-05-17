@@ -85,16 +85,26 @@
         // Create Geocoders for start and end inputs
         const startGeocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
-            types: 'address',
-            placeholder: 'Enter starting address',
-            countries: 'us'
+            placeholder: "Start address",
+            mapboxgl: mapboxgl,
+            types: 'place,address',
+            countries: 'us',
+            proximity: {
+                longitude: -118.4068,
+                latitude: 34.0901
+            }
         });
 
         const endGeocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
-            types: 'address',
-            placeholder: 'Enter destination address',
-            countries: 'us'
+            placeholder: "End address",
+            mapboxgl: mapboxgl,
+            types: 'place,address',
+            countries: 'us',
+            proximity: {
+                longitude: -118.4068,
+                latitude: 34.0901
+            }
         });
 
         // Add Geocoders to their respective containers
